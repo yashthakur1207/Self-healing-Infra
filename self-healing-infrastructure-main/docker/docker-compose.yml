@@ -1,0 +1,77 @@
+name: self-healing-infrastructure
+
+services:
+
+  app:
+    build:
+      context: ../app
+    container_name: self-healing-app
+    restart: unless-stopped
+    networks:
+      - monitoring-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: self-healing-nginx
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - monitoring-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: self-healing-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    networks:
+      - monitoring-network
+
+  blackbox:
+    image: prom/blackbox-exporter:latest
+    container_name: self-healing-blackbox
+    restart: unless-stopped
+    ports:
+      - "9115:9115"
+    volumes:
+      - ../monitoring/blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    networks:
+      - monitoring-network
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: self-healing-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9094:9093"
+    volumes:
+      - ../monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks:
+      - monitoring-network
+
+  webhook:
+    build:
+      context: ../automation/webhook
+    container_name: self-healing-webhook
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    volumes:
+      - ../automation/ansible:/ansible
+      - ../logs:/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/wsl/docker-desktop/cli-tools/usr/bin/docker:/usr/local/bin/docker:ro
+    networks:
+      - monitoring-network
+
+networks:
+  monitoring-network:
+    driver: bridge

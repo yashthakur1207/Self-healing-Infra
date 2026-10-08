@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Self-Healing Infrastructure</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <div>
+            <p class="eyebrow">DEVOPS • OBSERVABILITY • AUTOMATION</p>
+            <h1>Self-Healing Infrastructure</h1>
+            <p class="subtitle">
+                Automated monitoring, detection and recovery platform
+            </p>
+        </div>
+
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            SYSTEM HEALTHY
+        </div>
+    </header>
+
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <p class="section-label">APPLICATION STATUS</p>
+
+            <h2>Everything is running normally.</h2>
+
+            <p>
+                Prometheus monitors the infrastructure while
+                Alertmanager and Ansible provide automated recovery.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section class="cards">
+
+        <div class="card">
+            <span>Service</span>
+            <strong>Self-Healing App</strong>
+        </div>
+
+        <div class="card">
+            <span>Hostname</span>
+            <strong>{{ hostname }}</strong>
+        </div>
+
+        <div class="card">
+            <span>Uptime</span>
+            <strong>{{ uptime }} sec</strong>
+        </div>
+
+        <div class="card">
+            <span>Requests</span>
+            <strong>{{ requests }}</strong>
+        </div>
+
+    </section>
+
+
+    <section class="architecture">
+
+        <h2>Infrastructure Pipeline</h2>
+
+        <div class="pipeline">
+
+            <div class="pipeline-item">
+                <span>01</span>
+                <strong>Application</strong>
+                <small>Dynamic Flask service</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="pipeline-item">
+                <span>02</span>
+                <strong>Prometheus</strong>
+                <small>Metrics & monitoring</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="pipeline-item">
+                <span>03</span>
+                <strong>Alertmanager</strong>
+                <small>Alert processing</small>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="pipeline-item">
+                <span>04</span>
+                <strong>Ansible</strong>
+                <small>Automated recovery</small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="services">
+
+        <h2>Platform Components</h2>
+
+        <div class="service-grid">
+
+            <div class="service">
+                <div class="service-icon">P</div>
+                <div>
+                    <strong>Prometheus</strong>
+                    <p>Monitoring engine</p>
+                </div>
+                <span class="online">ONLINE</span>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">A</div>
+                <div>
+                    <strong>Alertmanager</strong>
+                    <p>Alert management</p>
+                </div>
+                <span class="online">ONLINE</span>
+            </div>
+
+            <div class="service">
+                <div class="service-icon">⚙</div>
+                <div>
+                    <strong>Ansible</strong>
+                    <p>Self-healing automation</p>
+                </div>
+                <span class="online">READY</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        <p>
+            Self-Healing Infrastructure Project
+        </p>
+
+        <p>
+            Prometheus • Alertmanager • Ansible • Docker
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+---
+- name: Self-Healing Infrastructure Recovery
+  hosts: managed
+  connection: local
+  gather_facts: false
+
+  vars:
+    alert_name: "UnknownAlert"
+    log_file: "/logs/ansible-healing.log"
+
+  tasks:
+
+    - name: Record healing event
+      ansible.builtin.shell:
+        cmd: >
+          echo "[HEALING] $(date '+%Y-%m-%d %H:%M:%S')
+          | Alert={{ alert_name }}
+          | Starting recovery" >> {{ log_file }}
+      changed_when: false
+
+    - name: Restart NGINX for NGINX related alerts
+      ansible.builtin.shell:
+        cmd: docker restart self-healing-nginx
+      when: alert_name in ["NginxDown", "PrometheusTargetDown"]
+      register: nginx_restart
+      changed_when: nginx_restart.rc == 0
+
+    - name: Restart application for application alerts
+      ansible.builtin.shell:
+        cmd: docker restart self-healing-app
+      when: alert_name == "ApplicationUnhealthy"
+      register: app_restart
+      changed_when: app_restart.rc == 0
+
+    - name: Restart application for high CPU alerts
+      ansible.builtin.shell:
+        cmd: docker restart self-healing-app
+      when: alert_name == "ContainerHighCPU"
+      register: cpu_restart
+      changed_when: cpu_restart.rc == 0
+
+    - name: Verify NGINX container
+      ansible.builtin.shell:
+        cmd: docker inspect -f '{{ "{{.State.Running}}" }}' self-healing-nginx
+      register: nginx_status
+      changed_when: false
+      when: alert_name in ["NginxDown", "PrometheusTargetDown"]
+
+    - name: Verify application container
+      ansible.builtin.shell:
+        cmd: docker inspect -f '{{ "{{.State.Running}}" }}' self-healing-app
+      register: app_status
+      changed_when: false
+      when: alert_name in ["ApplicationUnhealthy", "ContainerHighCPU"]
+
+    - name: Record recovery result
+      ansible.builtin.shell:
+        cmd: >
+          echo "[HEALING] $(date '+%Y-%m-%d %H:%M:%S')
+          | Alert={{ alert_name }}
+          | Recovery completed" >> {{ log_file }}
+      changed_when: false
+      when: alert_name in ["ApplicationUnhealthy", "ContainerHighCPU"]

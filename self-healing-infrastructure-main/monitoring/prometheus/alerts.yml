@@ -1,0 +1,32 @@
+groups:
+
+  - name: self-healing-alerts
+
+    rules:
+
+      - alert: ApplicationUnhealthy
+        expr: probe_success{job="blackbox", instance="http://app:5000/health"} == 0
+        for: 15s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application is unhealthy"
+          description: "The self-healing application is not responding to health checks."
+
+      - alert: NginxDown
+        expr: probe_success{job="blackbox", instance="http://nginx/health"} == 0
+        for: 15s
+        labels:
+          severity: critical
+        annotations:
+          summary: "NGINX is unavailable"
+          description: "The NGINX service is not responding to health checks."
+
+      - alert: WebhookDown
+        expr: probe_success{job="blackbox", instance="http://webhook:5001/health"} == 0
+        for: 15s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Webhook service is unavailable"
+          description: "The self-healing webhook service is not responding to health checks."

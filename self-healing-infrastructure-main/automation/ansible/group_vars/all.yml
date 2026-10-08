@@ -1,0 +1,15 @@
+---
+project_name: "self-healing-infrastructure"
+
+app_container: "self-healing-app"
+nginx_container: "self-healing-nginx"
+webhook_container: "self-healing-webhook"
+
+app_port: 5000
+nginx_port: 8080
+webhook_port: 5001
+
+log_directory: "/logs"
+
+health_check_retries: 5
+health_check_delay: 3
